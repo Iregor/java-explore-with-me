@@ -153,7 +153,7 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> getAllPublicEventsWithParams(SearchParameters parameters, HttpServletRequest request) {
         Pageable page = getPageable(parameters.getFrom(), parameters.getSize(), parameters.getSortProperty());
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
-        statClient.saveEndpointHit("emw-service", "/events", request.getRemoteAddr(), LocalDateTime.now().format(EventMapper.dateTimeFormatter));
+        statClient.saveEndpointHit("ewm-main-service", "/events", request.getRemoteAddr(), LocalDateTime.now().format(EventMapper.dateTimeFormatter));
 
         List<EventShortDto> events = eventRepository.findAll(getPublicPredicate(query, parameters), page)
                 .stream()
@@ -171,7 +171,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto getEventById(long eventId, HttpServletRequest request) {
         Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED).orElseThrow();
-        statClient.saveEndpointHit("emw-service", String.format("/events/%d", eventId), request.getRemoteAddr(), LocalDateTime.now().format(EventMapper.dateTimeFormatter));
+        statClient.saveEndpointHit("ewm-main-service", String.format("/events/%d", eventId), request.getRemoteAddr(), LocalDateTime.now().format(EventMapper.dateTimeFormatter));
         return EventMapper.toEventFullDto(event, getConfirmedRequests(eventId), getSingleEventViews(eventId));
     }
 
