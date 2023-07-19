@@ -17,11 +17,11 @@ public class CompilationMapper {
                 .build();
     }
 
-    public static Compilation toCompilation(UpdateCompilationRequest UpdateCompilationRequest, Compilation compilation, List<Event> events) {
+    public static Compilation toCompilation(UpdateCompilationRequest updateCompilationRequest, Compilation compilation, List<Event> events) {
         return Compilation.builder()
                 .id(compilation.getId())
-                .title(UpdateCompilationRequest.getTitle() != null ? UpdateCompilationRequest.getTitle() : compilation.getTitle())
-                .pinned(UpdateCompilationRequest.getPinned() != null ? UpdateCompilationRequest.getPinned() : compilation.isPinned())
+                .title(updateCompilationRequest.getTitle() != null ? updateCompilationRequest.getTitle() : compilation.getTitle())
+                .pinned(updateCompilationRequest.getPinned() != null ? updateCompilationRequest.getPinned() : compilation.isPinned())
                 .events(events)
                 .build();
     }
