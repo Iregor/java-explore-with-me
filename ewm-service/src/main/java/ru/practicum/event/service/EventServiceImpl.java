@@ -435,6 +435,7 @@ public class EventServiceImpl implements EventService {
     private void fillEventListWithViews(List<? extends EventShortDto> events) {
         List<Long> eventIds = events.stream().map(EventShortDto::getId).collect(Collectors.toList());
         Map<Long, Long> eventViewsMap = getEventViewsMap(eventIds);
+
         for (EventShortDto event : events) {
             Long views = eventViewsMap.get(event.getId());
             event.setViews(views != null ? views : 0);
