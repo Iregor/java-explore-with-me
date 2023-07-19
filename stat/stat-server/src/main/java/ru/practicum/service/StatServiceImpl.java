@@ -2,9 +2,7 @@ package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStats;
 import ru.practicum.exception.DatesNotConsistentException;
@@ -21,7 +19,6 @@ public class StatServiceImpl implements StatService {
     private final StatRepository statRepository;
 
     @Override
-    @ResponseStatus(HttpStatus.CREATED)
     public void postHit(EndpointHitDto endpointHitDto) {
         statRepository.save(EndpointHitMapper.toEndpointHit(endpointHitDto));
         log.info(String.format("Endpoint saved: %s", endpointHitDto));
