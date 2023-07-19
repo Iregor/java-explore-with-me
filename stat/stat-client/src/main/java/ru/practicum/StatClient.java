@@ -27,7 +27,6 @@ public class StatClient {
         String endpointPath = buildURI(uris);
         Map<String, Object> parameters = Map.of("start", start.format(dateTimeFormatter), "end", end.format(dateTimeFormatter), "unique", unique);
         HttpEntity<EndpointHitDto> httpEntity = new HttpEntity<>(defaultHeaders());
-        System.out.println("URI: " + statServerUrl + endpointPath);
         return restTemplate.exchange(statServerUrl + endpointPath, HttpMethod.GET, httpEntity, ViewStats[].class, parameters);
     }
 

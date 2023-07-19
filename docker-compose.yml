@@ -14,7 +14,7 @@ services:
 
   stat-db:
     image: postgres:15-alpine
-    container_name: stats-db-container
+    container_name: stat-db-container
     ports:
       - "6542:5432"
     environment:
@@ -29,6 +29,7 @@ services:
       - "8080:8080"
     depends_on:
       - ewm-db
+      - stat-server
     environment:
       - STAT_URL=http://stat-server:9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm-db
