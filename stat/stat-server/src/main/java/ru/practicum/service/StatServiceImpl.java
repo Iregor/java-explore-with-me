@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStats;
+import ru.practicum.exception.DatesNotConsistentException;
 import ru.practicum.mapper.EndpointHitMapper;
 import ru.practicum.repository.StatRepository;
 
@@ -25,6 +26,7 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public List<ViewStats> getStat(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        validateDates(start, end);
         List<ViewStats> response = unique ?
                 statRepository.findViewStatsByUniqueIP(start, end, uris) :
                 statRepository.findViewStats(start, end, uris);
@@ -41,5 +43,11 @@ public class StatServiceImpl implements StatService {
             sb.append(uri).append("&");
         }
         return sb.toString();
+    }
+
+    private void validateDates(LocalDateTime start, LocalDateTime end) {
+        if (start != null && end != null && start.isAfter(end)) {
+            throw new DatesNotConsistentException("Start date must be before end date");
+        }
     }
 }
