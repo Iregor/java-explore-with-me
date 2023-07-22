@@ -42,6 +42,7 @@ public class EventFullDto extends EventShortDto {
                         Boolean paid,
                         String title,
                         long views,
+                        long comments,
                         LocalDateTime createdOn,
                         String description,
                         Location location,
@@ -49,7 +50,7 @@ public class EventFullDto extends EventShortDto {
                         LocalDateTime publishedOn,
                         Boolean requestModeration,
                         EventState state) {
-        super(annotation, category, confirmedRequests, eventDate, id, initiator, paid, title, views);
+        super(annotation, category, confirmedRequests, eventDate, id, initiator, paid, title, views, comments);
         this.createdOn = createdOn;
         this.description = description;
         this.location = location;

@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> getUserComments(long userId, int from, int size) {
-        Pageable page = getPageable(from, size);
+        Pageable page = PageRequest.of(from / size, size, Sort.by("id").descending());
         return commentRepository.findAllByCommentatorId(userId, page)
                 .stream()
                 .map(CommentMapper::toCommentDto)

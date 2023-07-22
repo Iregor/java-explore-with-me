@@ -33,6 +33,4 @@ public class CommentPublicController {
         log.info("{}: comments returned: {}", LocalDateTime.now(), comments);
         return comments;
     }
-
-
 }

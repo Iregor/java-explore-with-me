@@ -63,7 +63,7 @@ public class EventMapper {
                 .build();
     }
 
-    public static EventFullDto toEventFullDto(Event event, long confirmedRequests, long views) {
+    public static EventFullDto toEventFullDto(Event event, long confirmedRequests, long views, long comments) {
         return EventFullDto
                 .fullBuilder()
                 .annotation(event.getAnnotation())
@@ -81,6 +81,7 @@ public class EventMapper {
                 .state(event.getState())
                 .title(event.getTitle())
                 .views(views)
+                .comments(comments)
                 .build();
     }
 

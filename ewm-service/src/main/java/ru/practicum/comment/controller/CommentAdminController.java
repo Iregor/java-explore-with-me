@@ -2,10 +2,8 @@ package ru.practicum.comment.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.comment.service.CommentService;
 
 import javax.validation.constraints.Positive;
@@ -19,6 +17,7 @@ public class CommentAdminController {
     private final CommentService commentService;
 
     @DeleteMapping("/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCommentById(@PathVariable @Positive long commentId) {
         commentService.deleteCommentById(commentId);
         log.info("{}: comment with id={} was deleted", LocalDateTime.now(), commentId);
