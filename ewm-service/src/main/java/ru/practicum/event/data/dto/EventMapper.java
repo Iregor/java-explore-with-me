@@ -1,5 +1,7 @@
 package ru.practicum.event.data.dto;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.category.data.Category;
 import ru.practicum.category.data.dto.CategoryMapper;
 import ru.practicum.event.data.Event;
@@ -9,6 +11,7 @@ import ru.practicum.user.data.dto.UserMapper;
 
 import java.time.format.DateTimeFormatter;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventMapper {
     public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
