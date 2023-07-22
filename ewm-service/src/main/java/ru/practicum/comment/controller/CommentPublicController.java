@@ -28,7 +28,9 @@ public class CommentPublicController {
 
     @GetMapping
     //Позволяет получить комментарии к событию
-    public List<CommentDto> getEventComments(@PathVariable @Positive long eventId, @RequestParam @PositiveOrZero int from, @RequestParam @Positive int size) {
+    public List<CommentDto> getEventComments(@PathVariable @Positive long eventId,
+                                             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                             @RequestParam(defaultValue = "10") @Positive int size) {
         List<CommentDto> comments = commentService.getEventComments(eventId, from, size);
         log.info("{}: comments returned: {}", LocalDateTime.now(), comments);
         return comments;
