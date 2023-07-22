@@ -992,7 +992,10 @@
 					}
 				],
 				"url": {
-					"raw": "/events/:eventId/comments",
+					"raw": "{{baseUrl}}/events/:eventId/comments",
+					"host": [
+						"{{baseUrl}}"
+					],
 					"path": [
 						"events",
 						":eventId",
