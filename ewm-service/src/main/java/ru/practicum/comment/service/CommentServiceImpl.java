@@ -31,8 +31,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto createComment(long userId, long eventId, NewCommentDto newCommentDto) {
         User commentator = userRepository.findById(userId).orElseThrow();
         Event event = eventRepository.findById(eventId).orElseThrow();
-        Comment comment = CommentMapper.toComment(commentator, event, newCommentDto);
-        comment.setCreated(LocalDateTime.now());
+        Comment comment = CommentMapper.toComment(commentator, event, newCommentDto, LocalDateTime.now());
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
@@ -85,5 +84,6 @@ public class CommentServiceImpl implements CommentService {
         if (commentPatchDto != null) {
             comment.setText(commentPatchDto.getText());
         }
+        comment.setEditedOn(LocalDateTime.now());
     }
 }

@@ -23,10 +23,11 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Size(min = 5, max = 300)
+    @Size(min = 5, max = 5000)
     private String text;
     @NotNull
     private LocalDateTime created;
+    private LocalDateTime editedOn;
     @NotNull
     @ManyToOne
     private User commentator;
