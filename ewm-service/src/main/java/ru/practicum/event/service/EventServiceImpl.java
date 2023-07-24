@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatClient;
 import ru.practicum.category.data.Category;
 import ru.practicum.category.data.CategoryRepository;
+import ru.practicum.comment.data.CommentRepository;
+import ru.practicum.comment.data.QComment;
 import ru.practicum.dto.ViewStats;
 import ru.practicum.event.data.*;
 import ru.practicum.event.data.dto.*;
@@ -44,6 +46,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
+    private final CommentRepository commentRepository;
     private final EntityManager entityManager;
     private final StatClient statClient;
 
@@ -58,6 +61,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
         fillEventListWithViews(events);
         fillEventListWithConfirmedRequests(events);
+        fillEventListWithComments(events);
         return events;
     }
 
@@ -69,7 +73,7 @@ public class EventServiceImpl implements EventService {
         Event event = EventMapper.toEvent(newEventDto, initiator, category);
         event.setCreatedOn(LocalDateTime.now());
         event.setState(EventState.PENDING);
-        return EventMapper.toEventFullDto(event = eventRepository.save(event));
+        return EventMapper.toEventFullDto(eventRepository.save(event));
     }
 
     @Override
@@ -78,7 +82,8 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventFullDto(
                 eventRepository.findByInitiatorIdAndId(userId, eventId).orElseThrow(),
                 getConfirmedRequests(eventId),
-                getSingleEventViews(eventId));
+                getSingleEventViews(eventId),
+                getSingleEventComments(eventId));
     }
 
     @Override
@@ -91,7 +96,8 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventFullDto(
                 eventRepository.save(event),
                 getConfirmedRequests(eventId),
-                getSingleEventViews(eventId));
+                getSingleEventViews(eventId),
+                getSingleEventComments(eventId));
     }
 
     @Override
@@ -105,7 +111,8 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventFullDto(
                 eventRepository.save(event),
                 getConfirmedRequests(eventId),
-                getSingleEventViews(eventId));
+                getSingleEventViews(eventId),
+                getSingleEventComments(eventId));
     }
 
     @Override
@@ -145,6 +152,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
         fillEventListWithConfirmedRequests(events);
         fillEventListWithViews(events);
+        fillEventListWithComments(events);
         return events;
     }
 
@@ -161,6 +169,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
         fillEventListWithConfirmedRequests(events);
         fillEventListWithViews(events);
+        fillEventListWithComments(events);
         if (parameters.getSortProperty() == SortProperty.VIEWS) {
             events.sort(Comparator.comparingLong(EventShortDto::getViews));
         }
@@ -172,9 +181,12 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getEventById(long eventId, HttpServletRequest request) {
         Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED).orElseThrow();
         statClient.saveEndpointHit("ewm-main-service", String.format("/events/%d", eventId), request.getRemoteAddr(), LocalDateTime.now().format(EventMapper.dateTimeFormatter));
-        return EventMapper.toEventFullDto(event, getConfirmedRequests(eventId), getSingleEventViews(eventId));
+        return EventMapper.toEventFullDto(
+                event,
+                getConfirmedRequests(eventId),
+                getSingleEventViews(eventId),
+                getSingleEventComments(eventId));
     }
-
 
     private Event patchEventFields(Event event, UpdateEventRequest updateRequest) {
         if (updateRequest.getAnnotation() != null) {
@@ -430,6 +442,32 @@ public class EventServiceImpl implements EventService {
 
     private long getConfirmedRequests(long eventId) {
         return requestRepository.countByStatusAndEventId(RequestStatus.CONFIRMED, eventId);
+    }
+
+    private void fillEventListWithComments(List<? extends EventShortDto> events) {
+        HashMap<Long, EventShortDto> eventsMap = new HashMap<>();
+        for (EventShortDto dto : events) {
+            eventsMap.put(dto.getId(), dto);
+        }
+
+        List<Long> ids = events.stream().map(EventShortDto::getId).collect(Collectors.toList());
+
+        JPAQuery<?> query = new JPAQuery<Void>(entityManager);
+        QComment comment = QComment.comment;
+        query
+                .select(comment.event.id, comment.id.count())
+                .from(comment)
+                .where(comment.event.id.in(ids))
+                .groupBy(comment.event.id)
+                .fetch()
+                .forEach(tuple -> {
+                    long eventId = tuple.get(comment.event.id);
+                    eventsMap.get(eventId).setComments(tuple.get(comment.id.count()));
+                });
+    }
+
+    private long getSingleEventComments(long eventId) {
+        return commentRepository.countByEventId(eventId);
     }
 
     private void fillEventListWithViews(List<? extends EventShortDto> events) {

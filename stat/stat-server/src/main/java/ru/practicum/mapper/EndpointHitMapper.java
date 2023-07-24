@@ -1,11 +1,14 @@
 package ru.practicum.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.entity.EndpointHit;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EndpointHitMapper {
     public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

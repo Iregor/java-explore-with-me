@@ -36,4 +36,6 @@ public class EventShortDto {
     private String title;
     @PositiveOrZero
     private long views;
+    @PositiveOrZero
+    private long comments;
 }
